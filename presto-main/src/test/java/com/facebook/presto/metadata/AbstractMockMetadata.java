@@ -61,12 +61,6 @@ public abstract class AbstractMockMetadata
     }
 
     @Override
-    public boolean isAggregationFunction(QualifiedName name)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<SqlFunction> listFunctions()
     {
         throw new UnsupportedOperationException();

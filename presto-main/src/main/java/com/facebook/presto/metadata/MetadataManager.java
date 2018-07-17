@@ -230,13 +230,6 @@ public class MetadataManager
     }
 
     @Override
-    public boolean isAggregationFunction(QualifiedName name)
-    {
-        // TODO: transactional when FunctionRegistry is made transactional
-        return functions.isAggregationFunction(name);
-    }
-
-    @Override
     public List<SqlFunction> listFunctions()
     {
         // TODO: transactional when FunctionRegistry is made transactional

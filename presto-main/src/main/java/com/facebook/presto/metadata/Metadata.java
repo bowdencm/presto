@@ -47,8 +47,6 @@ public interface Metadata
 
     Type getType(TypeSignature signature);
 
-    boolean isAggregationFunction(QualifiedName name);
-
     List<SqlFunction> listFunctions();
 
     void addFunctions(List<? extends SqlFunction> functions);
