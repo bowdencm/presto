@@ -14,7 +14,7 @@
 package com.facebook.presto.cost;
 
 import com.facebook.presto.Session;
-import com.facebook.presto.metadata.FunctionRegistry;
+import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.ConnectorSession;
@@ -43,11 +43,11 @@ final class StatsUtil
         return toStatsRepresentation(metadata.getFunctionRegistry(), session.toConnectorSession(), type, value);
     }
 
-    static OptionalDouble toStatsRepresentation(FunctionRegistry functionRegistry, ConnectorSession session, Type type, Object value)
+    static OptionalDouble toStatsRepresentation(FunctionManager functionManager, ConnectorSession session, Type type, Object value)
     {
         if (convertibleToDoubleWithCast(type)) {
-            FunctionInvoker functionInvoker = new FunctionInvoker(functionRegistry);
-            Signature castSignature = functionRegistry.getCoercion(type, DoubleType.DOUBLE);
+            FunctionInvoker functionInvoker = new FunctionInvoker(functionManager);
+            Signature castSignature = functionManager.getCoercion(type, DoubleType.DOUBLE);
             return OptionalDouble.of((double) functionInvoker.invoke(castSignature, session, singletonList(value)));
         }
 

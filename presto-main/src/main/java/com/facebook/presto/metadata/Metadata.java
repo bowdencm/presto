@@ -31,7 +31,6 @@ import com.facebook.presto.spi.statistics.TableStatistics;
 import com.facebook.presto.spi.type.Type;
 import com.facebook.presto.spi.type.TypeManager;
 import com.facebook.presto.spi.type.TypeSignature;
-import com.facebook.presto.sql.tree.QualifiedName;
 import io.airlift.slice.Slice;
 
 import java.util.Collection;
@@ -47,7 +46,7 @@ public interface Metadata
 
     Type getType(TypeSignature signature);
 
-    List<SqlFunction> listFunctions();
+    List<SqlFunction> listFunctions(Session session);
 
     void addFunctions(List<? extends SqlFunction> functions);
 
@@ -274,7 +273,7 @@ public interface Metadata
      */
     List<GrantInfo> listTablePrivileges(Session session, QualifiedTablePrefix prefix);
 
-    FunctionRegistry getFunctionRegistry();
+    FunctionManager getFunctionRegistry();
 
     ProcedureRegistry getProcedureRegistry();
 

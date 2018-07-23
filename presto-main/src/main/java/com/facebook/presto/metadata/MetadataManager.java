@@ -47,7 +47,6 @@ import com.facebook.presto.spi.type.Type;
 import com.facebook.presto.spi.type.TypeManager;
 import com.facebook.presto.spi.type.TypeSignature;
 import com.facebook.presto.sql.analyzer.FeaturesConfig;
-import com.facebook.presto.sql.tree.QualifiedName;
 import com.facebook.presto.transaction.TransactionManager;
 import com.facebook.presto.type.TypeDeserializer;
 import com.facebook.presto.type.TypeRegistry;
@@ -105,7 +104,7 @@ import static java.util.Objects.requireNonNull;
 public class MetadataManager
         implements Metadata
 {
-    private final FunctionRegistry functions;
+    private final FunctionManager functions;
     private final ProcedureRegistry procedures;
     private final TypeManager typeManager;
     private final JsonCodec<ViewDefinition> viewCodec;
@@ -145,7 +144,7 @@ public class MetadataManager
             TablePropertyManager tablePropertyManager,
             TransactionManager transactionManager)
     {
-        functions = new FunctionRegistry(typeManager, blockEncodingSerde, featuresConfig);
+        functions = new FunctionManager(typeManager, blockEncodingSerde, featuresConfig);
         procedures = new ProcedureRegistry(typeManager);
         this.typeManager = requireNonNull(typeManager, "types is null");
         this.viewCodec = requireNonNull(viewCodec, "viewCodec is null");
@@ -230,16 +229,16 @@ public class MetadataManager
     }
 
     @Override
-    public List<SqlFunction> listFunctions()
+    public List<SqlFunction> listFunctions(Session session)
     {
-        // TODO: transactional when FunctionRegistry is made transactional
-        return functions.list();
+        // TODO: transactional when FunctionManager is made transactional
+        return functions.list(session);
     }
 
     @Override
     public void addFunctions(List<? extends SqlFunction> functionInfos)
     {
-        // TODO: transactional when FunctionRegistry is made transactional
+        // TODO: transactional when FunctionManager is made transactional
         functions.addFunctions(functionInfos);
     }
 
@@ -854,9 +853,9 @@ public class MetadataManager
     }
 
     @Override
-    public FunctionRegistry getFunctionRegistry()
+    public FunctionManager getFunctionRegistry()
     {
-        // TODO: transactional when FunctionRegistry is made transactional
+        // TODO: transactional when FunctionManager is made transactional
         return functions;
     }
 

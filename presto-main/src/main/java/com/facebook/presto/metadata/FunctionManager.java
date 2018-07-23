@@ -308,15 +308,13 @@ public class FunctionManager
     private final FunctionNamespace operatorNamespace;
     private final TypeManager typeManager;
     private final BlockEncodingSerde blockEncodingSerde;
-    private final FeaturesConfig featuresConfig;
 
     public FunctionManager(TypeManager typeManager, BlockEncodingSerde blockEncodingSerde, FeaturesConfig featuresConfig)
     {
         functionNamespaces = ImmutableMap.of();
         this.typeManager = requireNonNull(typeManager, "typeManager is null");
         this.blockEncodingSerde = requireNonNull(blockEncodingSerde, "blockEncodingSerde is null");
-        this.featuresConfig = requireNonNull(featuresConfig, "featuresConfig is null");
-        operatorNamespace = new StaticFunctionNamespace(typeManager, blockEncodingSerde, featuresConfig);
+        operatorNamespace = new StaticFunctionNamespace(typeManager, blockEncodingSerde, this);
 
         addDefaultFunctions(featuresConfig);
     }
@@ -334,7 +332,7 @@ public class FunctionManager
         operatorNamespace.addFunctions(operatorAndFunctionMap.get(true));
 
         if (!functionNamespaces.containsKey(catalog)) {
-            FunctionNamespace namespace = new StaticFunctionNamespace(typeManager, blockEncodingSerde, featuresConfig);
+            FunctionNamespace namespace = new StaticFunctionNamespace(typeManager, blockEncodingSerde, this);
             namespace.addFunctions(operatorAndFunctionMap.get(false));
             functionNamespaces = ImmutableMap.<String, FunctionNamespace>builder()
                     .putAll(functionNamespaces)

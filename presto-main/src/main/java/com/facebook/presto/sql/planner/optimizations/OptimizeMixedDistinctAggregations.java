@@ -431,7 +431,7 @@ public class OptimizeMixedDistinctAggregations
         {
             return metadata.getFunctionRegistry()
                     .resolveFunction(
-                            functionName,
+                            session, functionName,
                             ImmutableList.of(new TypeSignatureProvider(symbolAllocator.getTypes().get(argument).getTypeSignature())));
         }
 
