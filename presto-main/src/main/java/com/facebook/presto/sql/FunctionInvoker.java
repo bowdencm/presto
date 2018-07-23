@@ -13,8 +13,8 @@
  */
 package com.facebook.presto.sql;
 
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
-import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.scalar.ScalarFunctionImplementation;
 import com.facebook.presto.operator.scalar.ScalarFunctionImplementation.ArgumentProperty;
 import com.facebook.presto.spi.ConnectorSession;
@@ -40,7 +40,7 @@ public class FunctionInvoker
         this.registry = requireNonNull(registry, "registry is null");
     }
 
-    public Object invoke(Signature function, ConnectorSession session, Object... arguments)
+    public Object invoke(FunctionHandle function, ConnectorSession session, Object... arguments)
     {
         return invoke(function, session, Arrays.asList(arguments));
     }
@@ -50,7 +50,7 @@ public class FunctionInvoker
      * <p>
      * Returns a value in the native container type corresponding to the declared SQL return type
      */
-    public Object invoke(Signature function, ConnectorSession session, List<Object> arguments)
+    public Object invoke(FunctionHandle function, ConnectorSession session, List<Object> arguments)
     {
         ScalarFunctionImplementation implementation = registry.getScalarFunctionImplementation(function);
         MethodHandle method = implementation.getMethodHandle();

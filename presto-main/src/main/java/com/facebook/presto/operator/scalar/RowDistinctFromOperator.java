@@ -14,8 +14,8 @@ package com.facebook.presto.operator.scalar;
  */
 
 import com.facebook.presto.metadata.BoundVariables;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
-import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.metadata.SqlOperator;
 import com.facebook.presto.spi.block.Block;
 import com.facebook.presto.spi.type.StandardTypes;
@@ -57,8 +57,8 @@ public class RowDistinctFromOperator
         ImmutableList.Builder<MethodHandle> argumentMethods = ImmutableList.builder();
         Type type = boundVariables.getTypeVariable("T");
         for (Type parameterType : type.getTypeParameters()) {
-            Signature signature = functionManager.resolveOperator(IS_DISTINCT_FROM, ImmutableList.of(parameterType, parameterType));
-            argumentMethods.add(functionManager.getScalarFunctionImplementation(signature).getMethodHandle());
+            FunctionHandle functionHandle = functionManager.resolveOperator(IS_DISTINCT_FROM, ImmutableList.of(parameterType, parameterType));
+            argumentMethods.add(functionManager.getScalarFunctionImplementation(functionHandle).getMethodHandle());
         }
         return new ScalarFunctionImplementation(
                 false,

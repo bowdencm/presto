@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.sql.gen;
 
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.function.OperatorType;
 import com.facebook.presto.spi.type.Type;
@@ -113,7 +114,7 @@ public class SwitchCodeGenerator
             RowExpression result = ((CallExpression) clause).getArguments().get(1);
 
             // call equals(value, operand)
-            Signature equalsFunction = generatorContext.getRegistry().resolveOperator(OperatorType.EQUAL, ImmutableList.of(value.getType(), operand.getType()));
+            FunctionHandle equalsFunctionHandle = generatorContext.getRegistry().resolveOperator(OperatorType.EQUAL, ImmutableList.of(value.getType(), operand.getType()));
 
             // TODO: what if operand is null? It seems that the call will return "null" (which is cleared below)
             // and the code only does the right thing because the value in the stack for that scenario is
@@ -121,8 +122,8 @@ public class SwitchCodeGenerator
             // This code should probably be checking for wasNull after the call and "failing" the equality
             // check if wasNull is true
             BytecodeNode equalsCall = generatorContext.generateCall(
-                    equalsFunction.getName(),
-                    generatorContext.getRegistry().getScalarFunctionImplementation(equalsFunction),
+                    equalsFunctionHandle.getSignature().getName(),
+                    generatorContext.getRegistry().getScalarFunctionImplementation(equalsFunctionHandle),
                     ImmutableList.of(generatorContext.generate(operand), getTempVariableNode));
 
             BytecodeBlock condition = new BytecodeBlock()

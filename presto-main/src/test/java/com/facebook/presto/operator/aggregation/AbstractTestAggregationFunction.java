@@ -15,8 +15,8 @@ package com.facebook.presto.operator.aggregation;
 
 import com.facebook.presto.Session;
 import com.facebook.presto.block.BlockEncodingManager;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
-import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.block.Block;
 import com.facebook.presto.spi.block.BlockBuilder;
 import com.facebook.presto.spi.block.RunLengthEncodedBlock;
@@ -64,8 +64,8 @@ public abstract class AbstractTestAggregationFunction
     protected final InternalAggregationFunction getFunction()
     {
         List<TypeSignatureProvider> parameterTypes = fromTypeSignatures(Lists.transform(getFunctionParameterTypes(), TypeSignature::parseTypeSignature));
-        Signature signature = functionManager.resolveFunction(session, QualifiedName.of(getFunctionName()), parameterTypes);
-        return functionManager.getAggregateFunctionImplementation(signature);
+        FunctionHandle handle = functionManager.resolveFunction(session, QualifiedName.of(getFunctionName()), parameterTypes);
+        return functionManager.getAggregateFunctionImplementation(handle);
     }
 
     protected abstract String getFunctionName();

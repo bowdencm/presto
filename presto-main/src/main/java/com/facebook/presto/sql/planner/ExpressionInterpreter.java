@@ -15,6 +15,7 @@ package com.facebook.presto.sql.planner;
 
 import com.facebook.presto.Session;
 import com.facebook.presto.client.FailureInfo;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionUtils;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.Signature;
@@ -680,8 +681,8 @@ public class ExpressionInterpreter
                 case PLUS:
                     return value;
                 case MINUS:
-                    Signature operatorSignature = metadata.getFunctionRegistry().resolveOperator(OperatorType.NEGATION, types(node.getValue()));
-                    MethodHandle handle = metadata.getFunctionRegistry().getScalarFunctionImplementation(operatorSignature).getMethodHandle();
+                    FunctionHandle operatorHandle = metadata.getFunctionRegistry().resolveOperator(OperatorType.NEGATION, types(node.getValue()));
+                    MethodHandle handle = metadata.getFunctionRegistry().getScalarFunctionImplementation(operatorHandle).getMethodHandle();
 
                     if (handle.type().parameterCount() > 0 && handle.type().parameterType(0) == ConnectorSession.class) {
                         handle = handle.bindTo(connectorSession);
@@ -795,8 +796,8 @@ public class ExpressionInterpreter
 
             Type commonType = metadata.getTypeManager().getCommonSuperType(firstType, secondType).get();
 
-            Signature firstCast = metadata.getFunctionRegistry().getCoercion(firstType, commonType);
-            Signature secondCast = metadata.getFunctionRegistry().getCoercion(secondType, commonType);
+            FunctionHandle firstCast = metadata.getFunctionRegistry().getCoercion(firstType, commonType);
+            FunctionHandle secondCast = metadata.getFunctionRegistry().getCoercion(secondType, commonType);
 
             // cast(first as <common type>) == cast(second as <common type>)
             boolean equal = (Boolean) invokeOperator(
@@ -898,8 +899,8 @@ public class ExpressionInterpreter
                 argumentValues.add(value);
                 argumentTypes.add(type);
             }
-            Signature functionSignature = metadata.getFunctionRegistry().resolveFunction(session, node.getName(), fromTypes(argumentTypes));
-            ScalarFunctionImplementation function = metadata.getFunctionRegistry().getScalarFunctionImplementation(functionSignature);
+            FunctionHandle functionHandle = metadata.getFunctionRegistry().resolveFunction(session, node.getName(), fromTypes(argumentTypes));
+            ScalarFunctionImplementation function = metadata.getFunctionRegistry().getScalarFunctionImplementation(functionHandle);
             for (int i = 0; i < argumentValues.size(); i++) {
                 Object value = argumentValues.get(i);
                 if (value == null && function.getArgumentProperty(i).getNullConvention() == RETURN_NULL_ON_NULL) {
@@ -911,7 +912,7 @@ public class ExpressionInterpreter
             if (optimize && (!function.isDeterministic() || hasUnresolvedValue(argumentValues) || node.getName().equals(QualifiedName.of("fail")))) {
                 return new FunctionCall(node.getName(), node.getWindow(), node.isDistinct(), toExpressions(argumentValues, argumentTypes));
             }
-            return functionInvoker.invoke(functionSignature, connectorSession, argumentValues);
+            return functionInvoker.invoke(functionHandle, connectorSession, argumentValues);
         }
 
         @Override
@@ -1103,7 +1104,7 @@ public class ExpressionInterpreter
                 return null;
             }
 
-            Signature operator = metadata.getFunctionRegistry().getCoercion(sourceType, targetType);
+            FunctionHandle operator = metadata.getFunctionRegistry().getCoercion(sourceType, targetType);
 
             try {
                 return functionInvoker.invoke(operator, connectorSession, ImmutableList.of(value));
@@ -1234,8 +1235,8 @@ public class ExpressionInterpreter
 
         private Object invokeOperator(OperatorType operatorType, List<? extends Type> argumentTypes, List<Object> argumentValues)
         {
-            Signature operatorSignature = metadata.getFunctionRegistry().resolveOperator(operatorType, argumentTypes);
-            return functionInvoker.invoke(operatorSignature, connectorSession, argumentValues);
+            FunctionHandle operatorHandle = metadata.getFunctionRegistry().resolveOperator(operatorType, argumentTypes);
+            return functionInvoker.invoke(operatorHandle, connectorSession, argumentValues);
         }
 
         private Expression toExpression(Object base, Type type)

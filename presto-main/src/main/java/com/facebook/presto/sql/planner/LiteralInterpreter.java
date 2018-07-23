@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.sql.planner;
 
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.ConnectorSession;
@@ -39,6 +40,7 @@ import com.google.common.collect.ImmutableList;
 import io.airlift.slice.Slice;
 
 import static com.facebook.presto.metadata.FunctionKind.SCALAR;
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.spi.type.TypeSignature.parseTypeSignature;
 import static com.facebook.presto.spi.type.VarcharType.VARCHAR;
 import static com.facebook.presto.sql.analyzer.SemanticErrorCode.INVALID_LITERAL;
@@ -131,13 +133,13 @@ public final class LiteralInterpreter
             }
 
             if (JSON.equals(type)) {
-                Signature operatorSignature = new Signature("json_parse", SCALAR, JSON.getTypeSignature(), VARCHAR.getTypeSignature());
-                return functionInvoker.invoke(operatorSignature, session, ImmutableList.of(utf8Slice(node.getValue())));
+                FunctionHandle operatorHandle = createOperatorHandle(new Signature("json_parse", SCALAR, JSON.getTypeSignature(), VARCHAR.getTypeSignature()));
+                return functionInvoker.invoke(operatorHandle, session, ImmutableList.of(utf8Slice(node.getValue())));
             }
 
             try {
-                Signature signature = metadata.getFunctionRegistry().getCoercion(VARCHAR, type);
-                return functionInvoker.invoke(signature, session, ImmutableList.of(utf8Slice(node.getValue())));
+                FunctionHandle handle = metadata.getFunctionRegistry().getCoercion(VARCHAR, type);
+                return functionInvoker.invoke(handle, session, ImmutableList.of(utf8Slice(node.getValue())));
             }
             catch (IllegalArgumentException e) {
                 throw new SemanticException(TYPE_MISMATCH, node, "No literal form for type %s", type);

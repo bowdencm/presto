@@ -150,7 +150,7 @@ public class TransformExistsApplyToLateralNode
 
     private PlanNode rewriteToDefaultAggregation(ApplyNode parent, Context context)
     {
-        Signature countSignature = functionManager.resolveFunction(context.getSession(), COUNT, ImmutableList.of());
+        Signature countSignature = functionManager.resolveFunction(context.getSession(), COUNT, ImmutableList.of()).getSignature();
         Symbol count = context.getSymbolAllocator().newSymbol(COUNT.toString(), BIGINT);
         Symbol exists = getOnlyElement(parent.getSubqueryAssignments().getSymbols());
 

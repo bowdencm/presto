@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.sql.gen;
 
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.scalar.ScalarFunctionImplementation;
 import com.facebook.presto.spi.function.OperatorType;
@@ -64,8 +65,9 @@ public class NullIfCodeGenerator
         Type secondType = second.getType();
 
         // if (equal(cast(first as <common type>), cast(second as <common type>))
-        Signature equalsSignature = generatorContext.getRegistry().resolveOperator(OperatorType.EQUAL, ImmutableList.of(firstType, secondType));
-        ScalarFunctionImplementation equalsFunction = generatorContext.getRegistry().getScalarFunctionImplementation(equalsSignature);
+        FunctionHandle equalsHandle = generatorContext.getRegistry().resolveOperator(OperatorType.EQUAL, ImmutableList.of(firstType, secondType));
+        Signature equalsSignature = equalsHandle.getSignature();
+        ScalarFunctionImplementation equalsFunction = generatorContext.getRegistry().getScalarFunctionImplementation(equalsHandle);
         BytecodeNode equalsCall = generatorContext.generateCall(
                 equalsSignature.getName(),
                 equalsFunction,
@@ -102,11 +104,11 @@ public class NullIfCodeGenerator
             return argument;
         }
 
-        Signature function = generatorContext
+        FunctionHandle function = generatorContext
                 .getRegistry()
                 .getCoercion(actualType.getTypeSignature(), requiredType);
 
         // TODO: do we need a full function call? (nullability checks, etc)
-        return generatorContext.generateCall(function.getName(), generatorContext.getRegistry().getScalarFunctionImplementation(function), ImmutableList.of(argument));
+        return generatorContext.generateCall(function.getSignature().getName(), generatorContext.getRegistry().getScalarFunctionImplementation(function), ImmutableList.of(argument));
     }
 }

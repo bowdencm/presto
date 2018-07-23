@@ -148,19 +148,23 @@ public class TransformQuantifiedComparisonApplyToLateralJoin
                     ImmutableMap.of(
                             minValue, new Aggregation(
                                     new FunctionCall(MIN, outputColumnReferences),
-                                    functionManager.resolveFunction(session, MIN, fromTypeSignatures(outputColumnTypeSignature)),
+                                    functionManager.resolveFunction(session, MIN, fromTypeSignatures(outputColumnTypeSignature))
+                                    .getSignature(),
                                     Optional.empty()),
                             maxValue, new Aggregation(
                                     new FunctionCall(MAX, outputColumnReferences),
-                                    functionManager.resolveFunction(session, MAX, fromTypeSignatures(outputColumnTypeSignature)),
+                                    functionManager.resolveFunction(session, MAX, fromTypeSignatures(outputColumnTypeSignature))
+                                    .getSignature(),
                                     Optional.empty()),
                             countAllValue, new Aggregation(
                                     new FunctionCall(COUNT, emptyList()),
-                                    functionManager.resolveFunction(session, COUNT, emptyList()),
+                                    functionManager.resolveFunction(session, COUNT, emptyList())
+                                    .getSignature(),
                                     Optional.empty()),
                             countNonNullValue, new Aggregation(
                                     new FunctionCall(COUNT, outputColumnReferences),
-                                    functionManager.resolveFunction(session, COUNT, fromTypeSignatures(outputColumnTypeSignature)),
+                                    functionManager.resolveFunction(session, COUNT, fromTypeSignatures(outputColumnTypeSignature))
+                                    .getSignature(),
                                     Optional.empty())),
                     ImmutableList.of(ImmutableList.of()),
                     ImmutableList.of(),

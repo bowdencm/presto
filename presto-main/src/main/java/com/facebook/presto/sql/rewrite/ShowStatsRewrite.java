@@ -14,10 +14,10 @@
 package com.facebook.presto.sql.rewrite;
 
 import com.facebook.presto.Session;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.QualifiedObjectName;
-import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.metadata.TableHandle;
 import com.facebook.presto.security.AccessControl;
 import com.facebook.presto.spi.ColumnHandle;
@@ -339,8 +339,8 @@ public class ShowStatsRewrite
             }
             FunctionManager functionManager = metadata.getFunctionRegistry();
             FunctionInvoker functionInvoker = new FunctionInvoker(functionManager);
-            Signature castSignature = functionManager.getCoercion(valueType, VarcharType.createUnboundedVarcharType());
-            Slice varcharValue = (Slice) functionInvoker.invoke(castSignature, session.toConnectorSession(), singletonList(value.get()));
+            FunctionHandle castHandle = functionManager.getCoercion(valueType, VarcharType.createUnboundedVarcharType());
+            Slice varcharValue = (Slice) functionInvoker.invoke(castHandle, session.toConnectorSession(), singletonList(value.get()));
             String stringValue = varcharValue.toStringUtf8();
             if (stringValue.length() > MAX_LOW_HIGH_LENGTH) {
                 stringValue = stringValue.substring(0, MAX_LOW_HIGH_LENGTH) + "...";

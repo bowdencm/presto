@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.sql.gen;
 
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.type.Type;
 import com.facebook.presto.sql.relational.RowExpression;
@@ -29,10 +30,10 @@ public class CastCodeGenerator
     {
         RowExpression argument = arguments.get(0);
 
-        Signature function = generatorContext
+        FunctionHandle function = generatorContext
                 .getRegistry()
                 .getCoercion(argument.getType(), returnType);
 
-        return generatorContext.generateCall(function.getName(), generatorContext.getRegistry().getScalarFunctionImplementation(function), ImmutableList.of(generatorContext.generate(argument)));
+        return generatorContext.generateCall(function.getSignature().getName(), generatorContext.getRegistry().getScalarFunctionImplementation(function), ImmutableList.of(generatorContext.generate(argument)));
     }
 }

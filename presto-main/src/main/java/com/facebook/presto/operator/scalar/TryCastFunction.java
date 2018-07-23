@@ -14,6 +14,7 @@
 package com.facebook.presto.operator.scalar;
 
 import com.facebook.presto.metadata.BoundVariables;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionKind;
 import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Signature;
@@ -88,8 +89,8 @@ public class TryCastFunction
         }
         else {
             // the resulting method needs to return a boxed type
-            Signature signature = functionManager.getCoercion(fromType, toType);
-            ScalarFunctionImplementation implementation = functionManager.getScalarFunctionImplementation(signature);
+            FunctionHandle handle = functionManager.getCoercion(fromType, toType);
+            ScalarFunctionImplementation implementation = functionManager.getScalarFunctionImplementation(handle);
             argumentProperties = ImmutableList.of(implementation.getArgumentProperty(0));
             MethodHandle coercion = implementation.getMethodHandle();
             coercion = coercion.asType(methodType(returnType, coercion.type()));

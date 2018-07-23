@@ -15,6 +15,7 @@ package com.facebook.presto.sql.analyzer;
 
 import com.facebook.presto.Session;
 import com.facebook.presto.SystemSessionProperties;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.OperatorNotFoundException;
@@ -857,7 +858,7 @@ public class ExpressionAnalyzer
             }
 
             ImmutableList<TypeSignatureProvider> argumentTypes = argumentTypesBuilder.build();
-            Signature function = resolveFunction(node, session, argumentTypes, functionManager);
+            Signature functionSignature = resolveFunction(node, session, argumentTypes, functionManager).getSignature();
 
             if (node.getOrderBy().isPresent()) {
                 for (SortItem sortItem : node.getOrderBy().get().getSortItems()) {
@@ -870,8 +871,8 @@ public class ExpressionAnalyzer
 
             for (int i = 0; i < node.getArguments().size(); i++) {
                 Expression expression = node.getArguments().get(i);
-                Type expectedType = typeManager.getType(function.getArgumentTypes().get(i));
-                requireNonNull(expectedType, format("Type %s not found", function.getArgumentTypes().get(i)));
+                Type expectedType = typeManager.getType(functionSignature.getArgumentTypes().get(i));
+                requireNonNull(expectedType, format("Type %s not found", functionSignature.getArgumentTypes().get(i)));
                 if (node.isDistinct() && !expectedType.isComparable()) {
                     throw new SemanticException(TYPE_MISMATCH, node, "DISTINCT can only be applied to comparable types (actual: %s)", expectedType);
                 }
@@ -881,12 +882,12 @@ public class ExpressionAnalyzer
                 }
                 else {
                     Type actualType = typeManager.getType(argumentTypes.get(i).getTypeSignature());
-                    coerceType(expression, actualType, expectedType, format("Function %s argument %d", function, i));
+                    coerceType(expression, actualType, expectedType, format("Function %s argument %d", functionSignature, i));
                 }
             }
-            resolvedFunctions.put(NodeRef.of(node), function);
+            resolvedFunctions.put(NodeRef.of(node), functionSignature);
 
-            Type type = typeManager.getType(function.getReturnType());
+            Type type = typeManager.getType(functionSignature.getReturnType());
             return setExpressionType(node, type);
         }
 
@@ -1233,7 +1234,7 @@ public class ExpressionAnalyzer
 
             Signature operatorSignature;
             try {
-                operatorSignature = functionManager.resolveOperator(operatorType, argumentTypes.build());
+                operatorSignature = functionManager.resolveOperator(operatorType, argumentTypes.build()).getSignature();
             }
             catch (OperatorNotFoundException e) {
                 throw new SemanticException(TYPE_MISMATCH, node, "%s", e.getMessage());
@@ -1410,7 +1411,7 @@ public class ExpressionAnalyzer
         }
     }
 
-    public static Signature resolveFunction(FunctionCall node, Session session, List<TypeSignatureProvider> argumentTypes, FunctionManager functionManager)
+    public static FunctionHandle resolveFunction(FunctionCall node, Session session, List<TypeSignatureProvider> argumentTypes, FunctionManager functionManager)
     {
         try {
             return functionManager.resolveFunction(session, node.getName(), argumentTypes);

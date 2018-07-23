@@ -434,7 +434,8 @@ public class OptimizeMixedDistinctAggregations
             return metadata.getFunctionRegistry()
                     .resolveFunction(
                             session, functionName,
-                            ImmutableList.of(new TypeSignatureProvider(symbolAllocator.getTypes().get(argument).getTypeSignature())));
+                            ImmutableList.of(new TypeSignatureProvider(symbolAllocator.getTypes().get(argument).getTypeSignature())))
+                    .getSignature();
         }
 
         // creates if clause specific to use case here, default value always null

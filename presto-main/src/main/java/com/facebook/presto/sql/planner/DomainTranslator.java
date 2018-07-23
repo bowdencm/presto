@@ -14,6 +14,8 @@
 package com.facebook.presto.sql.planner;
 
 import com.facebook.presto.Session;
+import com.facebook.presto.metadata.FunctionHandle;
+import com.facebook.presto.metadata.FunctionUtils;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.block.Block;
@@ -667,6 +669,7 @@ public final class DomainTranslator
         private Optional<Object> floorValue(Type fromType, Type toType, Object value)
         {
             return getSaturatedFloorCastOperator(fromType, toType)
+                    .map(FunctionUtils::createOperatorHandle)
                     .map((operator) -> functionInvoker.invoke(operator, session.toConnectorSession(), value));
         }
 
@@ -680,7 +683,7 @@ public final class DomainTranslator
 
         private int compareOriginalValueToCoerced(Type originalValueType, Object originalValue, Type coercedValueType, Object coercedValue)
         {
-            Signature castToOriginalTypeOperator = metadata.getFunctionRegistry().getCoercion(coercedValueType, originalValueType);
+            FunctionHandle castToOriginalTypeOperator = metadata.getFunctionRegistry().getCoercion(coercedValueType, originalValueType);
             Object coercedValueInOriginalType = functionInvoker.invoke(castToOriginalTypeOperator, session.toConnectorSession(), coercedValue);
             Block originalValueBlock = Utils.nativeValueToBlock(originalValueType, originalValue);
             Block coercedValueBlock = Utils.nativeValueToBlock(originalValueType, coercedValueInOriginalType);

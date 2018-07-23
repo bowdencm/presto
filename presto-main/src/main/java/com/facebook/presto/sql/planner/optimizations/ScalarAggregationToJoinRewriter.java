@@ -186,7 +186,8 @@ public class ScalarAggregationToJoinRewriter
                                 ImmutableList.of(nonNullableAggregationSourceSymbol.toSymbolReference())),
                         functionManager.resolveFunction(
                                 session, COUNT,
-                                fromTypeSignatures(scalarAggregationSourceTypeSignatures)),
+                                fromTypeSignatures(scalarAggregationSourceTypeSignatures))
+                        .getSignature(),
                         entry.getValue().getMask()));
             }
             else {

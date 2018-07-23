@@ -25,9 +25,9 @@ import com.facebook.presto.cost.StatsCalculator;
 import com.facebook.presto.cost.StatsProvider;
 import com.facebook.presto.execution.StageInfo;
 import com.facebook.presto.execution.StageStats;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.OperatorNotFoundException;
-import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.metadata.TableHandle;
 import com.facebook.presto.spi.ColumnHandle;
 import com.facebook.presto.spi.ConnectorTableLayoutHandle;
@@ -1443,7 +1443,7 @@ public class PlanPrinter
         }
 
         try {
-            Signature coercion = functionManager.getCoercion(type, VARCHAR);
+            FunctionHandle coercion = functionManager.getCoercion(type, VARCHAR);
             Slice coerced = (Slice) new FunctionInvoker(functionManager).invoke(coercion, session.toConnectorSession(), value);
             return coerced.toStringUtf8();
         }

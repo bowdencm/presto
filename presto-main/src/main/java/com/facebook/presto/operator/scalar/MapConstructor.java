@@ -37,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandle;
 import java.util.Optional;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.comparableTypeParameter;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.metadata.Signature.typeVariable;
@@ -110,7 +111,7 @@ public final class MapConstructor
         Type mapType = typeManager.getParameterizedType(MAP, ImmutableList.of(TypeSignatureParameter.of(keyType.getTypeSignature()), TypeSignatureParameter.of(valueType.getTypeSignature())));
         MethodHandle keyHashCode = functionManager.getScalarFunctionImplementation(functionManager.resolveOperator(OperatorType.HASH_CODE, ImmutableList.of(keyType))).getMethodHandle();
         MethodHandle keyEqual = functionManager.getScalarFunctionImplementation(functionManager.resolveOperator(OperatorType.EQUAL, ImmutableList.of(keyType, keyType))).getMethodHandle();
-        MethodHandle keyIndeterminate = functionManager.getScalarFunctionImplementation(internalOperator(INDETERMINATE.name(), BOOLEAN.getTypeSignature(), ImmutableList.of(keyType.getTypeSignature()))).getMethodHandle();
+        MethodHandle keyIndeterminate = functionManager.getScalarFunctionImplementation(createOperatorHandle(internalOperator(INDETERMINATE.name(), BOOLEAN.getTypeSignature(), ImmutableList.of(keyType.getTypeSignature())))).getMethodHandle();
         MethodHandle instanceFactory = constructorMethodHandle(State.class, MapType.class).bindTo(mapType);
 
         return new ScalarFunctionImplementation(
