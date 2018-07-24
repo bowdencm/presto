@@ -49,7 +49,7 @@ import static com.facebook.presto.util.StructuralTestUtil.mapType;
 public class TestMapAggAggregation
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
+    private static final FunctionManager functionManager = metadata.getFunctionManager();
 
     @Test
     public void testDuplicateKeysValues()

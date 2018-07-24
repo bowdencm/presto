@@ -40,7 +40,7 @@ import static org.testng.Assert.assertNotNull;
 public class TestArbitraryAggregation
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
+    private static final FunctionManager functionManager = metadata.getFunctionManager();
 
     @Test
     public void testAllRegistered()

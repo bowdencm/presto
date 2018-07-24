@@ -337,7 +337,7 @@ public class ShowStatsRewrite
             if (!value.isPresent()) {
                 return new Cast(new NullLiteral(), VARCHAR);
             }
-            FunctionManager functionManager = metadata.getFunctionRegistry();
+            FunctionManager functionManager = metadata.getFunctionManager();
             FunctionInvoker functionInvoker = new FunctionInvoker(functionManager);
             FunctionHandle castHandle = functionManager.getCoercion(valueType, VarcharType.createUnboundedVarcharType());
             Slice varcharValue = (Slice) functionInvoker.invoke(castHandle, session.toConnectorSession(), singletonList(value.get()));

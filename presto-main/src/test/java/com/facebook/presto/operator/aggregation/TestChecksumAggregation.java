@@ -50,7 +50,7 @@ import static java.util.Arrays.asList;
 
 public class TestChecksumAggregation
 {
-    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
 
     @Test
     public void testEmpty()

@@ -39,7 +39,7 @@ import static org.testng.Assert.assertEquals;
 
 public class TestMinMaxByNAggregation
 {
-    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
 
     @Test
     public void testMaxDoubleDouble()

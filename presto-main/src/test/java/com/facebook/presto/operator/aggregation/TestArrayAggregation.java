@@ -48,7 +48,7 @@ import static org.testng.Assert.assertTrue;
 
 public class TestArrayAggregation
 {
-    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
 
     @Test
     public void testEmpty()

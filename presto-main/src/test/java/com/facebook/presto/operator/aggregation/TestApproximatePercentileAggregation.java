@@ -40,7 +40,7 @@ import static com.facebook.presto.spi.type.TypeSignature.parseTypeSignature;
 public class TestApproximatePercentileAggregation
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
+    private static final FunctionManager functionManager = metadata.getFunctionManager();
 
     private static final InternalAggregationFunction DOUBLE_APPROXIMATE_PERCENTILE_AGGREGATION = functionManager.getAggregateFunctionImplementation(
             functionManager.resolveFunctionFromSignature(TEST_SESSION,

@@ -49,7 +49,7 @@ import static org.testng.Assert.assertTrue;
 public class TestJoinCompiler
 {
     private static final JoinCompiler joinCompiler = new JoinCompiler(MetadataManager.createTestMetadataManager(), new FeaturesConfig());
-    private static final FunctionManager FUNCTION_MANAGER = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager FUNCTION_MANAGER = MetadataManager.createTestMetadataManager().getFunctionManager();
     private static final boolean groupByUsesEqualTo = new FeaturesConfig().isGroupByUsesEqualTo();
 
     @DataProvider(name = "hashEnabledValues")

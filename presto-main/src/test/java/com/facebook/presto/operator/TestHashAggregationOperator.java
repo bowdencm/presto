@@ -94,7 +94,7 @@ import static org.testng.Assert.fail;
 @Test(singleThreaded = true)
 public class TestHashAggregationOperator
 {
-    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
 
     private static final InternalAggregationFunction LONG_AVERAGE = functionManager.getAggregateFunctionImplementation(
             functionManager.resolveFunctionFromSignature(TEST_SESSION,

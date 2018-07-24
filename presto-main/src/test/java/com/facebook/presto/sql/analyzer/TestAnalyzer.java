@@ -1464,7 +1464,7 @@ public class TestAnalyzer
                 new TablePropertyManager(),
                 transactionManager);
 
-        metadata.getFunctionRegistry().addFunctions(ImmutableList.of(APPLY_FUNCTION));
+        metadata.getFunctionManager().addFunctions(ImmutableList.of(APPLY_FUNCTION));
 
         catalogManager.registerCatalog(createTestingCatalog(TPCH_CATALOG, TPCH_CONNECTOR_ID));
         catalogManager.registerCatalog(createTestingCatalog(SECOND_CATALOG, SECOND_CONNECTOR_ID));

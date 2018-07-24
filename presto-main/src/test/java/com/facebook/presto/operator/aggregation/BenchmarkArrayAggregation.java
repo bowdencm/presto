@@ -107,7 +107,7 @@ public class BenchmarkArrayAggregation
             }
             ArrayType arrayType = new ArrayType(elementType);
             Signature signature = new Signature(name, AGGREGATE, arrayType.getTypeSignature(), elementType.getTypeSignature());
-            FunctionManager functionManager = metadata.getFunctionRegistry();
+            FunctionManager functionManager = metadata.getFunctionManager();
             InternalAggregationFunction function = functionManager.getAggregateFunctionImplementation(functionManager.resolveFunctionFromSignature(TEST_SESSION, signature));
             accumulator = function.bind(ImmutableList.of(0), Optional.empty()).createAccumulator();
 

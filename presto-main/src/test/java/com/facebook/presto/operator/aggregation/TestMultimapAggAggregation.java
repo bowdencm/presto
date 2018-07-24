@@ -115,7 +115,7 @@ public class TestMultimapAggAggregation
 
         MapType mapType = mapType(keyType, new ArrayType(valueType));
         Signature signature = new Signature(NAME, AGGREGATE, mapType.getTypeSignature(), keyType.getTypeSignature(), valueType.getTypeSignature());
-        FunctionManager functionManager = metadata.getFunctionRegistry();
+        FunctionManager functionManager = metadata.getFunctionManager();
         InternalAggregationFunction aggFunc = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION, signature));
 

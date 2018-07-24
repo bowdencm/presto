@@ -40,7 +40,7 @@ final class StatsUtil
 
     static OptionalDouble toStatsRepresentation(Metadata metadata, Session session, Type type, Object value)
     {
-        return toStatsRepresentation(metadata.getFunctionRegistry(), session.toConnectorSession(), type, value);
+        return toStatsRepresentation(metadata.getFunctionManager(), session.toConnectorSession(), type, value);
     }
 
     static OptionalDouble toStatsRepresentation(FunctionManager functionManager, ConnectorSession session, Type type, Object value)

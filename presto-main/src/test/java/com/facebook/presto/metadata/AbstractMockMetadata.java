@@ -342,7 +342,7 @@ public abstract class AbstractMockMetadata
     }
 
     @Override
-    public FunctionManager getFunctionRegistry()
+    public FunctionManager getFunctionManager()
     {
         throw new UnsupportedOperationException();
     }

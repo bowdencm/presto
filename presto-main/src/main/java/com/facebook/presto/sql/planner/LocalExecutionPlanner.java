@@ -739,7 +739,7 @@ public class LocalExecutionPlanner
                     context.getNextOperatorId(),
                     node.getId(),
                     queryPerformanceFetcher.get(),
-                    metadata.getFunctionRegistry(),
+                    metadata.getFunctionManager(),
                     statsCalculator,
                     costCalculator,
                     node.isVerbose());
@@ -890,7 +890,7 @@ public class LocalExecutionPlanner
                     arguments.add(source.getLayout().get(argumentSymbol));
                 }
                 Symbol symbol = entry.getKey();
-                FunctionManager functionManager = metadata.getFunctionRegistry();
+                FunctionManager functionManager = metadata.getFunctionManager();
                 FunctionHandle handle = functionManager.resolveFunction(session, QualifiedName.of(signature.getName()), fromTypeSignatures(signature.getArgumentTypes()));
                 WindowFunctionSupplier windowFunctionSupplier = functionManager.getWindowFunctionImplementation(handle);
                 Type type = metadata.getType(signature.getReturnType());
@@ -1244,7 +1244,7 @@ public class LocalExecutionPlanner
 
         private RowExpression toRowExpression(Expression expression, Map<NodeRef<Expression>, Type> types)
         {
-            return SqlToRowExpressionTranslator.translate(expression, SCALAR, types, metadata.getFunctionRegistry(), metadata.getTypeManager(), session, true);
+            return SqlToRowExpressionTranslator.translate(expression, SCALAR, types, metadata.getFunctionManager(), metadata.getTypeManager(), session, true);
         }
 
         private Map<Integer, Type> getInputTypes(Map<Symbol, Integer> layout, List<Type> types)
@@ -1397,7 +1397,7 @@ public class LocalExecutionPlanner
             List<Integer> remappedProbeKeyChannels = remappedProbeKeyChannelsBuilder.build();
             Function<RecordSet, RecordSet> probeKeyNormalizer = recordSet -> {
                 if (!overlappingFieldSets.isEmpty()) {
-                    recordSet = new FieldSetFilteringRecordSet(metadata.getFunctionRegistry(), recordSet, overlappingFieldSets);
+                    recordSet = new FieldSetFilteringRecordSet(metadata.getFunctionManager(), recordSet, overlappingFieldSets);
                 }
                 return new MappedRecordSet(recordSet, remappedProbeKeyChannels);
             };
@@ -2408,7 +2408,7 @@ public class LocalExecutionPlanner
                         .collect(toImmutableList());
             }
 
-            FunctionManager functionManager = metadata.getFunctionRegistry();
+            FunctionManager functionManager = metadata.getFunctionManager();
             return functionManager.getAggregateFunctionImplementation(functionManager.resolveFunctionFromSignature(session, aggregation.getSignature()))
                     .bind(arguments, maskChannel, source.getTypes(), getChannelsForSymbols(sortKeys, source.getLayout()), sortOrders, pagesIndexFactory, aggregation.getCall().isDistinct(), joinCompiler, session);
         }

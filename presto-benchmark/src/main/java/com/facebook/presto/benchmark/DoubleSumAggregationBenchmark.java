@@ -46,10 +46,10 @@ public class DoubleSumAggregationBenchmark
     protected List<? extends OperatorFactory> createOperatorFactories()
     {
         OperatorFactory tableScanOperator = createTableScanOperator(0, new PlanNodeId("test"), "orders", "totalprice");
-        FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+        FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
         Signature signature = new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature());
         FunctionHandle handle = functionManager.resolveFunction(session, QualifiedName.of(signature.getName()), fromTypeSignatures(signature.getArgumentTypes()));
-        InternalAggregationFunction doubleSum = MetadataManager.createTestMetadataManager().getFunctionRegistry().getAggregateFunctionImplementation(handle);
+        InternalAggregationFunction doubleSum = MetadataManager.createTestMetadataManager().getFunctionManager().getAggregateFunctionImplementation(handle);
         AggregationOperatorFactory aggregationOperator = new AggregationOperatorFactory(1, new PlanNodeId("test"), Step.SINGLE, ImmutableList.of(doubleSum.bind(ImmutableList.of(0), Optional.empty())));
         return ImmutableList.of(tableScanOperator, aggregationOperator);
     }

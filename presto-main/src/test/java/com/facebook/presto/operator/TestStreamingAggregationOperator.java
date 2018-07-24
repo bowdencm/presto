@@ -51,7 +51,7 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 @Test(singleThreaded = true)
 public class TestStreamingAggregationOperator
 {
-    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
 
     private static final InternalAggregationFunction LONG_SUM = functionManager.getAggregateFunctionImplementation(
             functionManager.resolveFunctionFromSignature(TEST_SESSION,

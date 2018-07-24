@@ -853,7 +853,7 @@ public class MetadataManager
     }
 
     @Override
-    public FunctionManager getFunctionRegistry()
+    public FunctionManager getFunctionManager()
     {
         // TODO: transactional when FunctionManager is made transactional
         return functions;

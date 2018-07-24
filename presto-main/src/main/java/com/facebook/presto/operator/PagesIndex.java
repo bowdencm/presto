@@ -137,7 +137,7 @@ public class PagesIndex
         @Override
         public PagesIndex newPagesIndex(List<Type> types, int expectedPositions)
         {
-            return new PagesIndex(ORDERING_COMPILER, JOIN_COMPILER, MetadataManager.createTestMetadataManager().getFunctionRegistry(), groupByUsesEqualTo, types, expectedPositions, eagerCompact);
+            return new PagesIndex(ORDERING_COMPILER, JOIN_COMPILER, MetadataManager.createTestMetadataManager().getFunctionManager(), groupByUsesEqualTo, types, expectedPositions, eagerCompact);
         }
     }
 
@@ -156,7 +156,7 @@ public class PagesIndex
             this.orderingCompiler = requireNonNull(orderingCompiler, "orderingCompiler is null");
             this.joinCompiler = requireNonNull(joinCompiler, "joinCompiler is null");
             this.eagerCompact = requireNonNull(featuresConfig, "featuresConfig is null").isPagesIndexEagerCompactionEnabled();
-            this.functionManager = requireNonNull(metadata, "metadata is null").getFunctionRegistry();
+            this.functionManager = requireNonNull(metadata, "metadata is null").getFunctionManager();
             this.groupByUsesEqualTo = featuresConfig.isGroupByUsesEqualTo();
         }
 

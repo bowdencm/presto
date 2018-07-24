@@ -13,7 +13,6 @@
  */
 package com.facebook.presto.operator;
 
-import com.facebook.presto.Session;
 import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.MetadataManager;
 import com.facebook.presto.metadata.Signature;
@@ -53,7 +52,7 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 public class TestAggregationOperator
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
+    private static final FunctionManager functionManager = metadata.getFunctionManager();
 
     private static final InternalAggregationFunction LONG_AVERAGE = functionManager.getAggregateFunctionImplementation(
             functionManager.resolveFunctionFromSignature(TEST_SESSION,
@@ -96,7 +95,7 @@ public class TestAggregationOperator
     @Test
     public void testAggregation()
     {
-        FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+        FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionManager();
         InternalAggregationFunction countVarcharColumn = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
                         new Signature("count", AGGREGATE, parseTypeSignature(StandardTypes.BIGINT), parseTypeSignature(StandardTypes.VARCHAR))));

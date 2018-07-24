@@ -107,7 +107,7 @@ public class QueryMonitor
         this.serverAddress = requireNonNull(nodeInfo, "nodeInfo is null").getExternalAddress();
         this.environment = requireNonNull(nodeInfo, "nodeInfo is null").getEnvironment();
         this.sessionPropertyManager = requireNonNull(sessionPropertyManager, "sessionPropertyManager is null");
-        this.functionManager = requireNonNull(metadata, "metadata is null").getFunctionRegistry();
+        this.functionManager = requireNonNull(metadata, "metadata is null").getFunctionManager();
         this.maxJsonLimit = toIntExact(requireNonNull(config, "config is null").getMaxOutputStageJsonSize().toBytes());
     }
 

@@ -113,7 +113,7 @@ public class JoinCompiler
     @Inject
     public JoinCompiler(Metadata metadata, FeaturesConfig config)
     {
-        this.registry = requireNonNull(metadata, "metadata is null").getFunctionRegistry();
+        this.registry = requireNonNull(metadata, "metadata is null").getFunctionManager();
         this.groupByUsesEqualTo = requireNonNull(config, "config is null").isGroupByUsesEqualTo();
     }
 

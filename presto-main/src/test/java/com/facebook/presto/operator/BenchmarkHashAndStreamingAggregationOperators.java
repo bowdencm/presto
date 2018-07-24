@@ -81,7 +81,7 @@ import static org.testng.Assert.assertEquals;
 public class BenchmarkHashAndStreamingAggregationOperators
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
+    private static final FunctionManager functionManager = metadata.getFunctionManager();
 
     private static final InternalAggregationFunction LONG_SUM = functionManager.getAggregateFunctionImplementation(
             functionManager.resolveFunctionFromSignature(TEST_SESSION,

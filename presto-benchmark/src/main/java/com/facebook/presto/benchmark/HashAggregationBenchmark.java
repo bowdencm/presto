@@ -43,7 +43,7 @@ public class HashAggregationBenchmark
     {
         super(localQueryRunner, "hash_agg", 5, 25);
 
-        FunctionManager functionManager = localQueryRunner.getMetadata().getFunctionRegistry();
+        FunctionManager functionManager = localQueryRunner.getMetadata().getFunctionManager();
         doubleSum = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(session,
                         new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature())));

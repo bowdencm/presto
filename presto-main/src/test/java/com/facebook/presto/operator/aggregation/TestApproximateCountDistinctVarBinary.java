@@ -33,7 +33,7 @@ public class TestApproximateCountDistinctVarBinary
     @Override
     public InternalAggregationFunction getAggregationFunction()
     {
-        FunctionManager functionManager = metadata.getFunctionRegistry();
+        FunctionManager functionManager = metadata.getFunctionManager();
         return functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
                         new Signature("approx_distinct", AGGREGATE, BIGINT.getTypeSignature(), parseTypeSignature("varchar"), DOUBLE.getTypeSignature())));

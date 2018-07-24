@@ -56,7 +56,7 @@ public class HandTpchQuery6
     {
         super(localQueryRunner, "hand_tpch_query_6", 10, 100);
 
-        FunctionManager functionManager = localQueryRunner.getMetadata().getFunctionRegistry();
+        FunctionManager functionManager = localQueryRunner.getMetadata().getFunctionManager();
         doubleSum = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(session,
                         new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature())));

@@ -81,8 +81,8 @@ public class TestHistogram
     @Test
     public void testSimpleHistograms()
     {
-        FunctionManager functionManager = getMetadata().getFunctionRegistry();
-        
+        FunctionManager functionManager = getMetadata().getFunctionManager();
+
         MapType mapType = mapType(VARCHAR, BIGINT);
         InternalAggregationFunction aggregationFunction = getAggregation(mapType.getTypeSignature(), parseTypeSignature(StandardTypes.VARCHAR));
         assertAggregation(
@@ -93,9 +93,9 @@ public class TestHistogram
         mapType = mapType(BIGINT, BIGINT);
         aggregationFunction = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
-                        new Signature(NAME, 
-                                AGGREGATE, 
-                                mapType.getTypeSignature(), 
+                        new Signature(NAME,
+                                AGGREGATE,
+                                mapType.getTypeSignature(),
                                 parseTypeSignature(StandardTypes.BIGINT))));
         assertAggregation(
                 aggregationFunction,
@@ -105,9 +105,9 @@ public class TestHistogram
         mapType = mapType(DOUBLE, BIGINT);
         aggregationFunction = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
-                        new Signature(NAME, 
-                                AGGREGATE, 
-                                mapType.getTypeSignature(), 
+                        new Signature(NAME,
+                                AGGREGATE,
+                                mapType.getTypeSignature(),
                                 parseTypeSignature(StandardTypes.DOUBLE))));
         assertAggregation(
                 aggregationFunction,
@@ -117,9 +117,9 @@ public class TestHistogram
         mapType = mapType(BOOLEAN, BIGINT);
         aggregationFunction = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
-                        new Signature(NAME, 
-                                AGGREGATE, 
-                                mapType.getTypeSignature(), 
+                        new Signature(NAME,
+                                AGGREGATE,
+                                mapType.getTypeSignature(),
                                 parseTypeSignature(StandardTypes.BOOLEAN))));
         assertAggregation(
                 aggregationFunction,
@@ -162,8 +162,8 @@ public class TestHistogram
     @Test
     public void testDuplicateKeysValues()
     {
-        FunctionManager functionManager = getMetadata().getFunctionRegistry();
-        
+        FunctionManager functionManager = getMetadata().getFunctionManager();
+
         MapType mapType = mapType(VARCHAR, BIGINT);
         InternalAggregationFunction aggregationFunction = getAggregation(mapType.getTypeSignature(), parseTypeSignature(StandardTypes.VARCHAR));
         assertAggregation(
@@ -174,9 +174,9 @@ public class TestHistogram
         mapType = mapType(TIMESTAMP_WITH_TIME_ZONE, BIGINT);
         aggregationFunction = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
-                        new Signature(NAME, 
-                                AGGREGATE, 
-                                mapType.getTypeSignature(), 
+                        new Signature(NAME,
+                                AGGREGATE,
+                                mapType.getTypeSignature(),
                                 parseTypeSignature(StandardTypes.TIMESTAMP_WITH_TIME_ZONE))));
         long timestampWithTimeZone1 = packDateTimeWithZone(new DateTime(1970, 1, 1, 0, 0, 0, 0, DATE_TIME_ZONE).getMillis(), TIME_ZONE_KEY);
         long timestampWithTimeZone2 = packDateTimeWithZone(new DateTime(2015, 1, 1, 0, 0, 0, 0, DATE_TIME_ZONE).getMillis(), TIME_ZONE_KEY);
@@ -189,7 +189,7 @@ public class TestHistogram
     @Test
     public void testWithNulls()
     {
-        FunctionManager functionManager = getMetadata().getFunctionRegistry();
+        FunctionManager functionManager = getMetadata().getFunctionManager();
 
         MapType mapType = mapType(BIGINT, BIGINT);
         InternalAggregationFunction aggregationFunction = getAggregation(mapType.getTypeSignature(), parseTypeSignature(StandardTypes.BIGINT));
@@ -201,9 +201,9 @@ public class TestHistogram
         mapType = mapType(BIGINT, BIGINT);
         aggregationFunction = functionManager.getAggregateFunctionImplementation(
                 functionManager.resolveFunctionFromSignature(TEST_SESSION,
-                        new Signature(NAME, 
-                                AGGREGATE, 
-                                mapType.getTypeSignature(), 
+                        new Signature(NAME,
+                                AGGREGATE,
+                                mapType.getTypeSignature(),
                                 parseTypeSignature(StandardTypes.BIGINT))));
         assertAggregation(
                 aggregationFunction,
@@ -445,7 +445,7 @@ public class TestHistogram
 
     private InternalAggregationFunction getAggregation(TypeSignature returnType, TypeSignature... arguments)
     {
-        FunctionManager functionManager = getMetadata(NEW).getFunctionRegistry();
+        FunctionManager functionManager = getMetadata(NEW).getFunctionManager();
         Signature signature = new Signature(NAME,
                 AGGREGATE,
                 returnType,

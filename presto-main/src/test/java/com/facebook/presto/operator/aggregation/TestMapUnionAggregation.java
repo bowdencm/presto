@@ -41,7 +41,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class TestMapUnionAggregation
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
+    private static final FunctionManager functionManager = metadata.getFunctionManager();
 
     @Test
     public void testSimpleWithDuplicates()

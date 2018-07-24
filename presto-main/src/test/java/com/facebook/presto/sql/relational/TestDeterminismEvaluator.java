@@ -38,7 +38,7 @@ public class TestDeterminismEvaluator
     @Test
     public void testDeterminismEvaluator()
     {
-        DeterminismEvaluator determinismEvaluator = new DeterminismEvaluator(createTestMetadataManager().getFunctionRegistry());
+        DeterminismEvaluator determinismEvaluator = new DeterminismEvaluator(createTestMetadataManager().getFunctionManager());
         Session session = testSessionBuilder().build();
 
         CallExpression random = new CallExpression(

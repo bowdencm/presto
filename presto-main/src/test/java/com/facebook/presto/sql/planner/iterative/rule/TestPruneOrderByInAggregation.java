@@ -37,7 +37,7 @@ import static com.facebook.presto.sql.planner.plan.AggregationNode.Step.SINGLE;
 public class TestPruneOrderByInAggregation
         extends BaseRuleTest
 {
-    private static final FunctionManager FUNCTION_MANAGER = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+    private static final FunctionManager FUNCTION_MANAGER = MetadataManager.createTestMetadataManager().getFunctionManager();
 
     @Test
     public void testBasics()

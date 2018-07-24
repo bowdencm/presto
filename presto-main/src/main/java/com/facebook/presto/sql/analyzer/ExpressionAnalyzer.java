@@ -1612,7 +1612,7 @@ public class ExpressionAnalyzer
             TypeProvider types)
     {
         return new ExpressionAnalyzer(
-                metadata.getFunctionRegistry(),
+                metadata.getFunctionManager(),
                 metadata.getTypeManager(),
                 node -> new StatementAnalyzer(analysis, metadata, sqlParser, accessControl, session),
                 session,
@@ -1624,7 +1624,7 @@ public class ExpressionAnalyzer
     public static ExpressionAnalyzer createConstantAnalyzer(Metadata metadata, Session session, List<Expression> parameters)
     {
         return createWithoutSubqueries(
-                metadata.getFunctionRegistry(),
+                metadata.getFunctionManager(),
                 metadata.getTypeManager(),
                 session,
                 parameters,
@@ -1636,7 +1636,7 @@ public class ExpressionAnalyzer
     public static ExpressionAnalyzer createConstantAnalyzer(Metadata metadata, Session session, List<Expression> parameters, boolean isDescribe)
     {
         return createWithoutSubqueries(
-                metadata.getFunctionRegistry(),
+                metadata.getFunctionManager(),
                 metadata.getTypeManager(),
                 session,
                 parameters,

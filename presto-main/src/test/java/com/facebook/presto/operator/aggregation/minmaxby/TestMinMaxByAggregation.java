@@ -52,7 +52,7 @@ import static org.testng.Assert.assertNotNull;
 public class TestMinMaxByAggregation
 {
     private static final MetadataManager METADATA = MetadataManager.createTestMetadataManager();
-    private static final FunctionManager functionManager = METADATA.getFunctionRegistry();
+    private static final FunctionManager functionManager = METADATA.getFunctionManager();
 
     @Test
     public void testAllRegistered()

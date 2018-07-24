@@ -138,7 +138,7 @@ public class TransformQuantifiedComparisonApplyToLateralJoin
             Symbol countAllValue = symbolAllocator.newSymbol("count_all", BigintType.BIGINT);
             Symbol countNonNullValue = symbolAllocator.newSymbol("count_non_null", BigintType.BIGINT);
 
-            FunctionManager functionManager = metadata.getFunctionRegistry();
+            FunctionManager functionManager = metadata.getFunctionManager();
             List<Expression> outputColumnReferences = ImmutableList.of(outputColumn.toSymbolReference());
             List<TypeSignature> outputColumnTypeSignature = ImmutableList.of(outputColumnType.getTypeSignature());
 
