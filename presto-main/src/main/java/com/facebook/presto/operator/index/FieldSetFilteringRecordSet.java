@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Throwables.throwIfUnchecked;
@@ -54,7 +55,9 @@ public class FieldSetFilteringRecordSet
             for (int field : fieldSet) {
                 fieldSetBuilder.add(new Field(
                         field,
-                        functionManager.getScalarFunctionImplementation(internalOperator(OperatorType.EQUAL, BooleanType.BOOLEAN, ImmutableList.of(columnTypes.get(field), columnTypes.get(field)))).getMethodHandle()));
+                        functionManager.getScalarFunctionImplementation(createOperatorHandle(
+                                internalOperator(OperatorType.EQUAL, BooleanType.BOOLEAN, ImmutableList.of(columnTypes.get(field), columnTypes.get(field)))))
+                                .getMethodHandle()));
             }
             fieldSetsBuilder.add(fieldSetBuilder.build());
         }

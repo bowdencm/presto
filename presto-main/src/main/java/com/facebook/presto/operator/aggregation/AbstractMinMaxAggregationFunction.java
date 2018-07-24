@@ -36,6 +36,7 @@ import io.airlift.bytecode.DynamicClassLoader;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.metadata.Signature.orderableTypeParameter;
 import static com.facebook.presto.operator.aggregation.AggregationMetadata.ParameterMetadata;
@@ -93,7 +94,7 @@ public abstract class AbstractMinMaxAggregationFunction
     public InternalAggregationFunction specialize(BoundVariables boundVariables, int arity, TypeManager typeManager, FunctionManager functionManager)
     {
         Type type = boundVariables.getTypeVariable("E");
-        MethodHandle compareMethodHandle = functionManager.getScalarFunctionImplementation(internalOperator(operatorType, BOOLEAN, ImmutableList.of(type, type))).getMethodHandle();
+        MethodHandle compareMethodHandle = functionManager.getScalarFunctionImplementation(createOperatorHandle(internalOperator(operatorType, BOOLEAN, ImmutableList.of(type, type)))).getMethodHandle();
         return generateAggregation(type, compareMethodHandle);
     }
 

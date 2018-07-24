@@ -43,6 +43,7 @@ import io.airlift.bytecode.expression.BytecodeExpression;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.metadata.Signature.withVariadicBound;
 import static com.facebook.presto.operator.scalar.ScalarFunctionImplementation.ArgumentProperty.valueTypeArgumentProperty;
@@ -146,7 +147,7 @@ public class RowToRowCast
                     CAST.name(),
                     toTypes.get(i).getTypeSignature(),
                     ImmutableList.of(fromTypes.get(i).getTypeSignature()));
-            ScalarFunctionImplementation function = functionManager.getScalarFunctionImplementation(signature);
+            ScalarFunctionImplementation function = functionManager.getScalarFunctionImplementation(createOperatorHandle(signature));
             Type currentFromType = fromTypes.get(i);
             if (currentFromType.equals(UNKNOWN)) {
                 body.append(singleRowBlockWriter.invoke("appendNull", BlockBuilder.class).pop());

@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.lang.invoke.MethodHandle;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.comparableTypeParameter;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.operator.scalar.ScalarFunctionImplementation.ArgumentProperty.valueTypeArgumentProperty;
@@ -56,8 +57,8 @@ public class MapHashCodeOperator
         Type keyType = boundVariables.getTypeVariable("K");
         Type valueType = boundVariables.getTypeVariable("V");
 
-        MethodHandle keyHashCodeFunction = functionManager.getScalarFunctionImplementation(internalOperator(HASH_CODE, BIGINT, ImmutableList.of(keyType))).getMethodHandle();
-        MethodHandle valueHashCodeFunction = functionManager.getScalarFunctionImplementation(internalOperator(HASH_CODE, BIGINT, ImmutableList.of(valueType))).getMethodHandle();
+        MethodHandle keyHashCodeFunction = functionManager.getScalarFunctionImplementation(createOperatorHandle(internalOperator(HASH_CODE, BIGINT, ImmutableList.of(keyType)))).getMethodHandle();
+        MethodHandle valueHashCodeFunction = functionManager.getScalarFunctionImplementation(createOperatorHandle(internalOperator(HASH_CODE, BIGINT, ImmutableList.of(valueType)))).getMethodHandle();
 
         MethodHandle method = METHOD_HANDLE.bindTo(keyHashCodeFunction).bindTo(valueHashCodeFunction).bindTo(keyType).bindTo(valueType);
         return new ScalarFunctionImplementation(

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.spi.function.OperatorType.EQUAL;
 import static com.facebook.presto.spi.function.OperatorType.HASH_CODE;
@@ -119,7 +120,7 @@ public class InCodeGenerator
         SwitchGenerationCase switchGenerationCase = checkSwitchGenerationCase(type, values);
 
         Signature hashCodeSignature = internalOperator(HASH_CODE, BIGINT, ImmutableList.of(type));
-        MethodHandle hashCodeFunction = generatorContext.getRegistry().getScalarFunctionImplementation(hashCodeSignature).getMethodHandle();
+        MethodHandle hashCodeFunction = generatorContext.getRegistry().getScalarFunctionImplementation(createOperatorHandle(hashCodeSignature)).getMethodHandle();
 
         ImmutableListMultimap.Builder<Integer, BytecodeNode> hashBucketsBuilder = ImmutableListMultimap.builder();
         ImmutableList.Builder<BytecodeNode> defaultBucket = ImmutableList.builder();
@@ -297,7 +298,7 @@ public class InCodeGenerator
 
         elseBlock.gotoLabel(noMatchLabel);
 
-        ScalarFunctionImplementation operator = generatorContext.getRegistry().getScalarFunctionImplementation(internalOperator(EQUAL, BOOLEAN, ImmutableList.of(type, type)));
+        ScalarFunctionImplementation operator = generatorContext.getRegistry().getScalarFunctionImplementation(createOperatorHandle(internalOperator(EQUAL, BOOLEAN, ImmutableList.of(type, type))));
 
         Binding equalsFunction = generatorContext
                 .getCallSiteBinder()

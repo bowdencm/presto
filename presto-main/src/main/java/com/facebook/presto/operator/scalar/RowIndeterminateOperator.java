@@ -35,6 +35,7 @@ import io.airlift.bytecode.instruction.LabelNode;
 import java.lang.invoke.MethodHandle;
 import java.util.List;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.metadata.Signature.withVariadicBound;
 import static com.facebook.presto.operator.scalar.ScalarFunctionImplementation.ArgumentProperty.valueTypeArgumentProperty;
@@ -136,7 +137,7 @@ public class RowIndeterminateOperator
                         INDETERMINATE.name(),
                         BOOLEAN.getTypeSignature(),
                         ImmutableList.of(fieldTypes.get(i).getTypeSignature()));
-                ScalarFunctionImplementation function = functionManager.getScalarFunctionImplementation(signature);
+                ScalarFunctionImplementation function = functionManager.getScalarFunctionImplementation(createOperatorHandle(signature));
                 BytecodeExpression element = constantType(binder, fieldTypes.get(i)).getValue(value, constantInt(i));
 
                 ifNullField.ifFalse(new IfStatement("if the field is not null but indeterminate...")

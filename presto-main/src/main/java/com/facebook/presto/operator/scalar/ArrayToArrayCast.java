@@ -36,6 +36,7 @@ import io.airlift.bytecode.Variable;
 
 import java.lang.invoke.MethodHandle;
 
+import static com.facebook.presto.metadata.FunctionUtils.createOperatorHandle;
 import static com.facebook.presto.metadata.Signature.internalOperator;
 import static com.facebook.presto.metadata.Signature.typeVariable;
 import static com.facebook.presto.operator.scalar.ScalarFunctionImplementation.ArgumentProperty.valueTypeArgumentProperty;
@@ -76,7 +77,7 @@ public class ArrayToArrayCast
         Type toType = boundVariables.getTypeVariable("T");
 
         Signature signature = internalOperator(CAST.name(), toType.getTypeSignature(), ImmutableList.of(fromType.getTypeSignature()));
-        ScalarFunctionImplementation function = functionManager.getScalarFunctionImplementation(signature);
+        ScalarFunctionImplementation function = functionManager.getScalarFunctionImplementation(createOperatorHandle(signature));
         Class<?> castOperatorClass = generateArrayCast(typeManager, signature, function);
         MethodHandle methodHandle = methodHandle(castOperatorClass, "castArray", ConnectorSession.class, Block.class);
         return new ScalarFunctionImplementation(
