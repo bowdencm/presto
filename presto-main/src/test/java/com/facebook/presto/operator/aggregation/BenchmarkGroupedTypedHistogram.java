@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.operator.aggregation;
 
+import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.MetadataManager;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.GroupByIdBlock;
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.facebook.presto.SessionTestUtils.TEST_SESSION;
 import static com.facebook.presto.block.BlockAssertions.createStringsBlock;
 import static com.facebook.presto.metadata.FunctionKind.AGGREGATE;
 import static com.facebook.presto.operator.aggregation.histogram.Histogram.NAME;
@@ -162,11 +164,10 @@ public class BenchmarkGroupedTypedHistogram
         MapType mapType = mapType(VARCHAR, BIGINT);
         MetadataManager metadata = getMetadata(groupMode);
 
-        return metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature(NAME,
-                        AGGREGATE,
-                        mapType.getTypeSignature(),
-                        parseTypeSignature(StandardTypes.VARCHAR)));
+        FunctionManager functionManager = metadata.getFunctionRegistry();
+        return functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                        new Signature(NAME, AGGREGATE, mapType.getTypeSignature(), parseTypeSignature(StandardTypes.VARCHAR))));
     }
 
     private static MetadataManager getMetadata(HistogramGroupImplementation groupMode)

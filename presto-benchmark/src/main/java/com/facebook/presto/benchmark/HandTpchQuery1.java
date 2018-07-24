@@ -14,6 +14,7 @@
 package com.facebook.presto.benchmark;
 
 import com.facebook.presto.benchmark.HandTpchQuery1.TpchQuery1Operator.TpchQuery1OperatorFactory;
+import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.DriverContext;
 import com.facebook.presto.operator.HashAggregationOperator.HashAggregationOperatorFactory;
@@ -27,6 +28,7 @@ import com.facebook.presto.spi.block.Block;
 import com.facebook.presto.spi.type.Type;
 import com.facebook.presto.sql.planner.plan.AggregationNode.Step;
 import com.facebook.presto.sql.planner.plan.PlanNodeId;
+import com.facebook.presto.sql.tree.QualifiedName;
 import com.facebook.presto.testing.LocalQueryRunner;
 import com.facebook.presto.util.DateTimeUtils;
 import com.google.common.collect.ImmutableList;
@@ -42,6 +44,7 @@ import static com.facebook.presto.spi.type.BigintType.BIGINT;
 import static com.facebook.presto.spi.type.DateType.DATE;
 import static com.facebook.presto.spi.type.DoubleType.DOUBLE;
 import static com.facebook.presto.spi.type.VarcharType.VARCHAR;
+import static com.facebook.presto.sql.analyzer.TypeSignatureProvider.fromTypeSignatures;
 import static com.google.common.base.Preconditions.checkState;
 import static io.airlift.units.DataSize.Unit.MEGABYTE;
 import static java.util.Objects.requireNonNull;
@@ -58,14 +61,23 @@ public class HandTpchQuery1
     {
         super(localQueryRunner, "hand_tpch_query_1", 1, 5);
 
-        longAverage = localQueryRunner.getMetadata().getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature("avg", AGGREGATE, DOUBLE.getTypeSignature(), BIGINT.getTypeSignature()));
-        doubleAverage = localQueryRunner.getMetadata().getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature("avg", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature()));
-        doubleSum = localQueryRunner.getMetadata().getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature()));
-        countFunction = localQueryRunner.getMetadata().getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature("count", AGGREGATE, BIGINT.getTypeSignature()));
+        FunctionManager functionManager = localQueryRunner.getMetadata().getFunctionRegistry();
+
+        Signature longAverageSignature = new Signature("avg", AGGREGATE, DOUBLE.getTypeSignature(), BIGINT.getTypeSignature());
+        longAverage = functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(session, longAverageSignature));
+
+        Signature doubleAverageSignature = new Signature("avg", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature());
+        doubleAverage = functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(session, doubleAverageSignature));
+
+        Signature doubleSumSignature = new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature());
+        doubleSum = functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(session, doubleSumSignature));
+
+        Signature countSignature = new Signature("count", AGGREGATE, BIGINT.getTypeSignature());
+        countFunction = functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(session, countSignature));
     }
 
     @Override

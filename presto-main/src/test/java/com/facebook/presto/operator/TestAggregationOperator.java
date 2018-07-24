@@ -13,6 +13,8 @@
  */
 package com.facebook.presto.operator;
 
+import com.facebook.presto.Session;
+import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.MetadataManager;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.AggregationOperator.AggregationOperatorFactory;
@@ -51,17 +53,23 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 public class TestAggregationOperator
 {
     private static final MetadataManager metadata = MetadataManager.createTestMetadataManager();
+    private static final FunctionManager functionManager = metadata.getFunctionRegistry();
 
-    private static final InternalAggregationFunction LONG_AVERAGE = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-            new Signature("avg", AGGREGATE, DOUBLE.getTypeSignature(), BIGINT.getTypeSignature()));
-    private static final InternalAggregationFunction DOUBLE_SUM = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-            new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature()));
-    private static final InternalAggregationFunction LONG_SUM = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-            new Signature("sum", AGGREGATE, BIGINT.getTypeSignature(), BIGINT.getTypeSignature()));
-    private static final InternalAggregationFunction REAL_SUM = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-            new Signature("sum", AGGREGATE, REAL.getTypeSignature(), REAL.getTypeSignature()));
-    private static final InternalAggregationFunction COUNT = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-            new Signature("count", AGGREGATE, BIGINT.getTypeSignature()));
+    private static final InternalAggregationFunction LONG_AVERAGE = functionManager.getAggregateFunctionImplementation(
+            functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                    new Signature("avg", AGGREGATE, DOUBLE.getTypeSignature(), BIGINT.getTypeSignature())));
+    private static final InternalAggregationFunction DOUBLE_SUM = functionManager.getAggregateFunctionImplementation(
+            functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                    new Signature("sum", AGGREGATE, DOUBLE.getTypeSignature(), DOUBLE.getTypeSignature())));
+    private static final InternalAggregationFunction LONG_SUM = functionManager.getAggregateFunctionImplementation(
+            functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                    new Signature("sum", AGGREGATE, BIGINT.getTypeSignature(), BIGINT.getTypeSignature())));
+    private static final InternalAggregationFunction REAL_SUM = functionManager.getAggregateFunctionImplementation(
+            functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                    new Signature("sum", AGGREGATE, REAL.getTypeSignature(), REAL.getTypeSignature())));
+    private static final InternalAggregationFunction COUNT = functionManager.getAggregateFunctionImplementation(
+            functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                    new Signature("count", AGGREGATE, BIGINT.getTypeSignature())));
 
     private ExecutorService executor;
     private ScheduledExecutorService scheduledExecutor;
@@ -88,11 +96,13 @@ public class TestAggregationOperator
     @Test
     public void testAggregation()
     {
-        MetadataManager metadata = MetadataManager.createTestMetadataManager();
-        InternalAggregationFunction countVarcharColumn = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature("count", AGGREGATE, parseTypeSignature(StandardTypes.BIGINT), parseTypeSignature(StandardTypes.VARCHAR)));
-        InternalAggregationFunction maxVarcharColumn = metadata.getFunctionRegistry().getAggregateFunctionImplementation(
-                new Signature("max", AGGREGATE, parseTypeSignature(StandardTypes.VARCHAR), parseTypeSignature(StandardTypes.VARCHAR)));
+        FunctionManager functionManager = MetadataManager.createTestMetadataManager().getFunctionRegistry();
+        InternalAggregationFunction countVarcharColumn = functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                        new Signature("count", AGGREGATE, parseTypeSignature(StandardTypes.BIGINT), parseTypeSignature(StandardTypes.VARCHAR))));
+        InternalAggregationFunction maxVarcharColumn = functionManager.getAggregateFunctionImplementation(
+                functionManager.resolveFunctionFromSignature(TEST_SESSION,
+                        new Signature("max", AGGREGATE, parseTypeSignature(StandardTypes.VARCHAR), parseTypeSignature(StandardTypes.VARCHAR))));
         List<Page> input = rowPagesBuilder(VARCHAR, BIGINT, VARCHAR, BIGINT, REAL, DOUBLE, VARCHAR)
                 .addSequencePage(100, 0, 0, 300, 500, 400, 500, 500)
                 .build();

@@ -23,6 +23,8 @@ import com.facebook.presto.execution.TaskManagerConfig;
 import com.facebook.presto.execution.buffer.OutputBuffer;
 import com.facebook.presto.execution.buffer.PagesSerdeFactory;
 import com.facebook.presto.index.IndexManager;
+import com.facebook.presto.metadata.FunctionHandle;
+import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Metadata;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.AggregationOperator.AggregationOperatorFactory;
@@ -163,6 +165,7 @@ import com.facebook.presto.sql.tree.FieldReference;
 import com.facebook.presto.sql.tree.FunctionCall;
 import com.facebook.presto.sql.tree.NodeRef;
 import com.facebook.presto.sql.tree.OrderBy;
+import com.facebook.presto.sql.tree.QualifiedName;
 import com.facebook.presto.sql.tree.SortItem;
 import com.facebook.presto.sql.tree.SymbolReference;
 import com.google.common.base.VerifyException;
@@ -224,6 +227,7 @@ import static com.facebook.presto.spi.type.BigintType.BIGINT;
 import static com.facebook.presto.spi.type.TypeUtils.writeNativeValue;
 import static com.facebook.presto.sql.analyzer.ExpressionAnalyzer.getExpressionTypes;
 import static com.facebook.presto.sql.analyzer.ExpressionAnalyzer.getExpressionTypesFromInput;
+import static com.facebook.presto.sql.analyzer.TypeSignatureProvider.fromTypeSignatures;
 import static com.facebook.presto.sql.planner.ExpressionNodeInliner.replaceExpression;
 import static com.facebook.presto.sql.planner.SystemPartitioningHandle.COORDINATOR_DISTRIBUTION;
 import static com.facebook.presto.sql.planner.SystemPartitioningHandle.FIXED_ARBITRARY_DISTRIBUTION;
@@ -886,7 +890,9 @@ public class LocalExecutionPlanner
                     arguments.add(source.getLayout().get(argumentSymbol));
                 }
                 Symbol symbol = entry.getKey();
-                WindowFunctionSupplier windowFunctionSupplier = metadata.getFunctionRegistry().getWindowFunctionImplementation(signature);
+                FunctionManager functionManager = metadata.getFunctionRegistry();
+                FunctionHandle handle = functionManager.resolveFunction(session, QualifiedName.of(signature.getName()), fromTypeSignatures(signature.getArgumentTypes()));
+                WindowFunctionSupplier windowFunctionSupplier = functionManager.getWindowFunctionImplementation(handle);
                 Type type = metadata.getType(signature.getReturnType());
                 windowFunctionsBuilder.add(window(windowFunctionSupplier, type, frameInfo, arguments.build()));
                 windowFunctionOutputSymbolsBuilder.add(symbol);
@@ -2402,9 +2408,8 @@ public class LocalExecutionPlanner
                         .collect(toImmutableList());
             }
 
-            return metadata
-                    .getFunctionRegistry()
-                    .getAggregateFunctionImplementation(aggregation.getSignature())
+            FunctionManager functionManager = metadata.getFunctionRegistry();
+            return functionManager.getAggregateFunctionImplementation(functionManager.resolveFunctionFromSignature(session, aggregation.getSignature()))
                     .bind(arguments, maskChannel, source.getTypes(), getChannelsForSymbols(sortKeys, source.getLayout()), sortOrders, pagesIndexFactory, aggregation.getCall().isDistinct(), joinCompiler, session);
         }
 

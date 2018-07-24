@@ -382,6 +382,19 @@ public class FunctionManager
         throw new PrestoException(FUNCTION_NOT_FOUND, format("Function %s not found in path: %s", name, session.getPath()));
     }
 
+    public FunctionHandle resolveFunctionFromSignature(Session session, Signature signature)
+    {
+        for (SqlPathElement element : session.getPath().getParsedPath()) {
+            if (functionNamespaces.containsKey(element)) {
+                FunctionNamespace namespace = functionNamespaces.get(getCatalog(element, session));
+                if (namespace.isRegistered(signature)) {
+                    return new FunctionHandle(signature, getCatalog(element, session), DEFAULT_FUNCTION_SCHEMA);
+                }
+            }
+        }
+        throw new PrestoException(FUNCTION_NOT_FOUND, format("Function signature %s not found in path: %s", signature, session.getPath()));
+    }
+
     public WindowFunctionSupplier getWindowFunctionImplementation(FunctionHandle handle)
     {
         try {
@@ -418,14 +431,6 @@ public class FunctionManager
     public boolean canResolveOperator(OperatorType operatorType, Type returnType, List<? extends Type> argumentTypes)
     {
         return operatorNamespace.canResolveOperator(operatorType, returnType, argumentTypes);
-    }
-
-    public boolean isRegistered(FunctionHandle handle)
-    {
-        if (operatorNamespace.isRegistered(handle.getSignature())) {
-            return true;
-        }
-        return functionNamespaces.get(handle.getCatalog()).isRegistered(handle.getSignature());
     }
 
     public FunctionHandle resolveOperator(OperatorType operatorType, List<? extends Type> argumentTypes)

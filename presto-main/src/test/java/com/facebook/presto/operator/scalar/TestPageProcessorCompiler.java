@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.operator.scalar;
 
+import com.facebook.presto.Session;
 import com.facebook.presto.metadata.MetadataManager;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.operator.DriverYieldSignal;
@@ -51,6 +52,7 @@ import static com.facebook.presto.spi.type.TypeSignature.parseTypeSignature;
 import static com.facebook.presto.spi.type.VarcharType.VARCHAR;
 import static com.facebook.presto.sql.relational.Expressions.constant;
 import static com.facebook.presto.sql.relational.Expressions.field;
+import static com.facebook.presto.testing.TestingSession.testSessionBuilder;
 import static com.google.common.collect.Iterators.getOnlyElement;
 import static java.util.Collections.singletonList;
 import static org.testng.Assert.assertEquals;
@@ -183,7 +185,8 @@ public class TestPageProcessorCompiler
 
         PageProcessor processor = compiler.compilePageProcessor(Optional.empty(), ImmutableList.of(lessThanRandomExpression)).get();
 
-        assertFalse(new DeterminismEvaluator(metadataManager.getFunctionRegistry()).isDeterministic(lessThanRandomExpression));
+        Session session = testSessionBuilder().build();
+        assertFalse(new DeterminismEvaluator(metadataManager.getFunctionRegistry()).isDeterministic(lessThanRandomExpression, session));
 
         Page page = new Page(createLongDictionaryBlock(1, 100));
         Page outputPage = getOnlyElement(processor.process(null, new DriverYieldSignal(), page)).orElseThrow(() -> new AssertionError("page is not present"));

@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.sql.relational;
 
+import com.facebook.presto.Session;
 import com.facebook.presto.metadata.Signature;
 import com.facebook.presto.spi.type.StandardTypes;
 import com.google.common.collect.ImmutableList;
@@ -27,6 +28,7 @@ import static com.facebook.presto.spi.type.BooleanType.BOOLEAN;
 import static com.facebook.presto.spi.type.TypeSignature.parseTypeSignature;
 import static com.facebook.presto.sql.relational.Expressions.constant;
 import static com.facebook.presto.sql.relational.Expressions.field;
+import static com.facebook.presto.testing.TestingSession.testSessionBuilder;
 import static java.util.Collections.singletonList;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -37,6 +39,7 @@ public class TestDeterminismEvaluator
     public void testDeterminismEvaluator()
     {
         DeterminismEvaluator determinismEvaluator = new DeterminismEvaluator(createTestMetadataManager().getFunctionRegistry());
+        Session session = testSessionBuilder().build();
 
         CallExpression random = new CallExpression(
                 new Signature(
@@ -46,15 +49,15 @@ public class TestDeterminismEvaluator
                         parseTypeSignature(StandardTypes.BIGINT)),
                 BIGINT,
                 singletonList(constant(10L, BIGINT)));
-        assertFalse(determinismEvaluator.isDeterministic(random));
+        assertFalse(determinismEvaluator.isDeterministic(random, session));
 
         InputReferenceExpression col0 = field(0, BIGINT);
         Signature lessThan = internalOperator(LESS_THAN, BOOLEAN, ImmutableList.of(BIGINT, BIGINT));
 
         CallExpression lessThanExpression = new CallExpression(lessThan, BOOLEAN, ImmutableList.of(col0, constant(10L, BIGINT)));
-        assertTrue(determinismEvaluator.isDeterministic(lessThanExpression));
+        assertTrue(determinismEvaluator.isDeterministic(lessThanExpression, session));
 
         CallExpression lessThanRandomExpression = new CallExpression(lessThan, BOOLEAN, ImmutableList.of(col0, random));
-        assertFalse(determinismEvaluator.isDeterministic(lessThanRandomExpression));
+        assertFalse(determinismEvaluator.isDeterministic(lessThanRandomExpression, session));
     }
 }

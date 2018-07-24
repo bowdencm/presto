@@ -13,33 +13,41 @@
  */
 package com.facebook.presto.sql.relational;
 
+import com.facebook.presto.Session;
+import com.facebook.presto.metadata.FunctionHandle;
 import com.facebook.presto.metadata.FunctionManager;
 import com.facebook.presto.metadata.Signature;
+import com.facebook.presto.spi.PrestoException;
+import com.facebook.presto.sql.tree.QualifiedName;
 
+import static com.facebook.presto.spi.StandardErrorCode.FUNCTION_NOT_FOUND;
+import static com.facebook.presto.sql.analyzer.TypeSignatureProvider.fromTypeSignatures;
 import static java.util.Objects.requireNonNull;
 
 public class DeterminismEvaluator
 {
-    final FunctionManager registry;
+    final FunctionManager functionManager;
 
-    public DeterminismEvaluator(FunctionManager registry)
+    public DeterminismEvaluator(FunctionManager functionManager)
     {
-        this.registry = requireNonNull(registry, "registry is null");
+        this.functionManager = requireNonNull(functionManager, "functionManager is null");
     }
 
-    public boolean isDeterministic(RowExpression expression)
+    public boolean isDeterministic(RowExpression expression, Session session)
     {
-        return expression.accept(new Visitor(registry), null);
+        return expression.accept(new Visitor(functionManager, session), null);
     }
 
     private static class Visitor
             implements RowExpressionVisitor<Boolean, Void>
     {
         private final FunctionManager registry;
+        private final Session session;
 
-        public Visitor(FunctionManager registry)
+        public Visitor(FunctionManager registry, Session session)
         {
             this.registry = registry;
+            this.session = session;
         }
 
         @Override
@@ -58,8 +66,17 @@ public class DeterminismEvaluator
         public Boolean visitCall(CallExpression call, Void context)
         {
             Signature signature = call.getSignature();
-            if (registry.isRegistered(signature) && !registry.getScalarFunctionImplementation(signature).isDeterministic()) {
-                return false;
+
+            try {
+                FunctionHandle handle = registry.resolveFunction(session, QualifiedName.of(signature.getName()), fromTypeSignatures(signature.getArgumentTypes()));
+                if (!registry.getScalarFunctionImplementation(handle).isDeterministic()) {
+                    return false;
+                }
+            }
+            catch (PrestoException e) {
+                if (!e.getErrorCode().equals(FUNCTION_NOT_FOUND.toErrorCode())) {
+                    throw e;
+                }
             }
 
             return call.getArguments().stream()
