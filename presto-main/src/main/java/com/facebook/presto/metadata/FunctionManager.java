@@ -384,24 +384,33 @@ public class FunctionManager
 
     public WindowFunctionSupplier getWindowFunctionImplementation(FunctionHandle handle)
     {
-        if (operatorNamespace.isRegistered(handle.getSignature())) {
+        try {
             return operatorNamespace.getWindowFunctionImplementation(handle.getSignature());
+        }
+        catch (PrestoException e) {
+            //do nothing and get the regular implementation
         }
         return functionNamespaces.get(handle.getCatalog()).getWindowFunctionImplementation(handle.getSignature());
     }
 
     public InternalAggregationFunction getAggregateFunctionImplementation(FunctionHandle handle)
     {
-        if (operatorNamespace.isRegistered(handle.getSignature())) {
+        try {
             return operatorNamespace.getAggregateFunctionImplementation(handle.getSignature());
+        }
+        catch (PrestoException e) {
+            //do nothing and get the regular implementation
         }
         return functionNamespaces.get(handle.getCatalog()).getAggregateFunctionImplementation(handle.getSignature());
     }
 
     public ScalarFunctionImplementation getScalarFunctionImplementation(FunctionHandle handle)
     {
-        if (operatorNamespace.isRegistered(handle.getSignature())) {
+        try {
             return operatorNamespace.getScalarFunctionImplementation(handle.getSignature());
+        }
+        catch (PrestoException e) {
+            //do nothing and get the regular implementation
         }
         return functionNamespaces.get(handle.getCatalog()).getScalarFunctionImplementation(handle.getSignature());
     }
